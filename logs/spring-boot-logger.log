@@ -5420,3 +5420,6 @@ org.springframework.expression.spel.SpelEvaluationException: EL1011E: Method cal
 2021-08-28 20:24:29,470 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-80-exec-1] Initializing Servlet 'dispatcherServlet'
 2021-08-28 20:24:29,470 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-80-exec-1] Completed initialization in 0 ms
 2021-08-28 20:24:29,649 WARN org.apache.juli.logging.DirectJDKLog [http-nio-80-exec-1] Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [147] milliseconds.
+2021-08-28 20:30:56,086 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-28 20:30:56,094 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-28 20:30:56,118 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
