@@ -1,15 +1,16 @@
 package ru.jm.crud.dao;
 
-import org.springframework.stereotype.Repository;
 import ru.jm.crud.model.User;
 import ru.jm.crud.model.UserRole;
 
+import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.UnaryOperator;
+
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -51,25 +52,6 @@ public class UserDaoImpl implements UserDao {
     public void update(User user) {
         User mergedUser = entityManager.merge(user);
         user.cloneUser(mergedUser);
-    }
-
-    @Override
-    public String add(UserRole userRole) {
-        entityManager.persist(userRole);
-        return "ok";
-    }
-
-    @Override
-    public UserRole getRole(Integer id) {
-        TypedQuery<UserRole> result = entityManager.createQuery("FROM UserRole WHERE id=:id", UserRole.class).setParameter("id", id);
-        return result.getResultList().isEmpty() ? null : result.getSingleResult();
-    }
-
-    @Override
-    public ArrayList<UserRole> getRoles() {
-        ArrayList<UserRole> list = new ArrayList<>(entityManager.createQuery("FROM UserRole ORDER BY id", UserRole.class).getResultList());
-        System.out.println("Role list received from sql: " + list);
-        return list;
     }
 
     @Override

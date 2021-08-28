@@ -1,16 +1,16 @@
 package ru.jm.crud.controller;
 
+import ru.jm.crud.model.User;
+import ru.jm.crud.model.UserRole;
+import ru.jm.crud.service.RoleService;
+import ru.jm.crud.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.jm.crud.model.User;
-import ru.jm.crud.model.UserRole;
-import ru.jm.crud.service.RoleService;
-import ru.jm.crud.service.UserService;
-
 import javax.validation.Valid;
 import java.util.ArrayList;
 

@@ -1,22 +1,22 @@
 package ru.jm.crud.service;
 
+import ru.jm.crud.model.UserRole;
+import ru.jm.crud.dao.RoleDao;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.jm.crud.dao.UserDao;
-import ru.jm.crud.model.UserRole;
-
 import java.util.ArrayList;
-import java.util.Set;
+
 
 @Service
 @Transactional
 public class RoleServiceImpl implements RoleService {
 
-    final UserDao dao;
+    final RoleDao dao;
 
     @Autowired
-    public RoleServiceImpl(UserDao dao) {
+    public RoleServiceImpl(RoleDao dao) {
         this.dao = dao;
     }
 
@@ -28,6 +28,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public UserRole getRole(Integer id) {
         return dao.getRole(id);
+    }
+
+    @Override
+    public UserRole getRole(String role) {
+        return dao.getRole(role);
     }
 
     @Override

@@ -4,7 +4,6 @@ import ru.jm.crud.model.User;
 import ru.jm.crud.model.UserRole;
 
 import java.util.List;
-import java.util.Set;
 
 
 public interface UserService {

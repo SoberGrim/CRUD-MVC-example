@@ -8,12 +8,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.UnaryOperator;
+
 
 @NoArgsConstructor
 @Entity
@@ -222,4 +222,5 @@ public class User implements UserDetails {
     public void addRole(UserRole role) {
         userRoles.add(role);
     }
+
 }
