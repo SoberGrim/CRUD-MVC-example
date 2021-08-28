@@ -5,11 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.jm.crud.model.User;
-import ru.jm.crud.model.UserRole;
 import ru.jm.crud.service.UserService;
 
 import java.security.Principal;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/")
@@ -37,9 +35,7 @@ public class MainController {
     @GetMapping("user")
     public String user(Principal principal, Model model) {
         User user = service.getByUsername(principal.getName());
-        Set<UserRole> roles = service.getRoles();
         model.addAttribute("user", user);
-        model.addAttribute("roles", roles);
         return "user";
     }
 }

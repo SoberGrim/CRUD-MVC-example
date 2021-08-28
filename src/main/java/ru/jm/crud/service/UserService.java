@@ -10,9 +10,6 @@ import java.util.Set;
 public interface UserService {
 
     String add(User user);
-    String add(UserRole userRole);
-    UserRole getRole(Integer id);
-    Set<UserRole> getRoles();
     String add(String username, String password, String firstName, String lastName, String age, String email, UserRole... roles);
     User getById(Long id);
     User getByUsername(String username);

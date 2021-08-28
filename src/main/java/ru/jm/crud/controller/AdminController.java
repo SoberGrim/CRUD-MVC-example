@@ -8,18 +8,23 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.jm.crud.model.User;
 import ru.jm.crud.model.UserRole;
+import ru.jm.crud.service.RoleService;
 import ru.jm.crud.service.UserService;
 
 import javax.validation.Valid;
-import java.util.Set;
+import java.util.ArrayList;
+
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
     final UserService service;
+    final RoleService roleService;
+
     @Autowired
-    public AdminController(UserService service) {
+    public AdminController(UserService service, RoleService roleService) {
         this.service = service;
+        this.roleService = roleService;
     }
 
     @GetMapping()
@@ -32,7 +37,7 @@ public class AdminController {
     @GetMapping("{id}")
     public String findById(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", service.getById(id));
-        Set<UserRole> roles = service.getRoles();
+        ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         return "show";
     }
@@ -42,7 +47,7 @@ public class AdminController {
         User user = service.getById(id);
         model.addAttribute("user", user);
         model.addAttribute("userOrig", user);
-        Set<UserRole> roles = service.getRoles();
+        ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         return "edit";
     }
@@ -53,7 +58,7 @@ public class AdminController {
                          @RequestParam(value = "index", required = false) Integer[] index,
                          @PathVariable("id") Long id,
                          Model model) {
-        Set<UserRole> roles = service.getRoles();
+        ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         User userOrig = service.getById(id);
         model.addAttribute("userOrig", userOrig);
@@ -79,7 +84,7 @@ public class AdminController {
 
         if (index != null) {
             for (Integer i : index) {
-                user.addRole(service.getRole(i));
+                user.addRole(roleService.getRole(i));
             }
         }
 
@@ -89,7 +94,7 @@ public class AdminController {
 
     @GetMapping("/new")
     public String addNewUser(Model model) {
-        Set<UserRole> roles = service.getRoles();
+        ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         User user = new User();
         model.addAttribute("user", user);
@@ -101,7 +106,7 @@ public class AdminController {
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
                          @RequestParam(value = "index", required = false) Integer[] index,
                          Model model) {
-        Set<UserRole> roles = service.getRoles();
+        ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
 
         if (bindingResult.hasErrors()) {
@@ -123,7 +128,7 @@ public class AdminController {
 
         if (index != null) {
             for (Integer i : index) {
-                user.addRole(service.getRole(i));
+                user.addRole(roleService.getRole(i));
             }
         }
 
@@ -134,14 +139,14 @@ public class AdminController {
 
     @GetMapping("filter")
     public String filter(@ModelAttribute("user") User user, Model model) {
-        Set<UserRole> roles = service.getRoles();
+        ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         return "filter";
     }
 
     @GetMapping("search")
     public String search(@ModelAttribute("user") User user, Model model) {
-        Set<UserRole> roles = service.getRoles();
+        ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         return "search";
     }
@@ -152,7 +157,7 @@ public class AdminController {
         System.out.println("Setting filter");
         if (index != null) {
             for (Integer i : index) {
-                user.addRole(service.getRole(i));
+                user.addRole(roleService.getRole(i));
             }
         }
         service.setFilter(user, true);
@@ -165,7 +170,7 @@ public class AdminController {
         System.out.println("Setting search filter");
         if (index != null) {
             for (Integer i : index) {
-                user.addRole(service.getRole(i));
+                user.addRole(roleService.getRole(i));
             }
         }
         service.setFilter(user, false);
@@ -178,8 +183,6 @@ public class AdminController {
         System.out.println("Removed filter");
         return "redirect:/admin";
     }
-    //удалить себя?)
-    //фильтр по ролям?
 
     @GetMapping("/delete={id}")
     public String deleteByGet(@PathVariable("id") Long id) {

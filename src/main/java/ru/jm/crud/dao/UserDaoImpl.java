@@ -18,7 +18,7 @@ public class UserDaoImpl implements UserDao {
     private String filterAge;
     private String filterEmail;
     private String filterUsername;
-    Set<UserRole> filterRoles;
+    List<UserRole> filterRoles;
     private boolean filterStrict;
     private boolean isFilterActive = false;
     private List<User> userCache;
@@ -66,10 +66,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Set<UserRole> getRoles() {
-        Set<UserRole> set = new HashSet<>(entityManager.createQuery("FROM UserRole", UserRole.class).getResultList());
-        System.out.println("Role list received from sql: " + set);
-        return set;
+    public ArrayList<UserRole> getRoles() {
+        ArrayList<UserRole> list = new ArrayList<>(entityManager.createQuery("FROM UserRole ORDER BY id", UserRole.class).getResultList());
+        System.out.println("Role list received from sql: " + list);
+        return list;
     }
 
     @Override
@@ -251,7 +251,7 @@ public class UserDaoImpl implements UserDao {
 
             if ((this.filterRoles != null)&&(this.filterRoles.size() != 0)) {
                 boolean userHasSearchedRoles = true;
-                Set<UserRole> userRoles = user.getUserRoles();
+                List<UserRole> userRoles = user.getUserRoles();
                 for (UserRole searchedRole: this.filterRoles) {
                     if (!userRoles.contains(searchedRole)) {
                         userHasSearchedRoles = false;

@@ -12,10 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 @NoArgsConstructor
@@ -49,9 +46,9 @@ public class User implements UserDetails {
     private String username;
 
     @NotNull
-    @Column(name = "password", nullable = false, length = 120)
+    @Column(name = "password", nullable = false, length = 60)
     @Size(min = 4, message = "Password minimum length is 4 symbols")
-    @Size(max = 120, message = "Password maximum length is 120 symbols")
+    @Size(max = 60, message = "Password maximum length is 60 symbols")
     private String password;
 
     @NotNull
@@ -89,9 +86,9 @@ public class User implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
-    private Set<UserRole> userRoles = new HashSet<>();
+    private List<UserRole> userRoles = new ArrayList<>();
 
-    public User(String username, String password, String firstname, String lastname, String age, String email, Set<UserRole> userRoles) {
+    public User(String username, String password, String firstname, String lastname, String age, String email, List<UserRole> userRoles) {
         setUsername(username);
         setPassword(password);
         setFirstname(firstname);
@@ -102,7 +99,7 @@ public class User implements UserDetails {
     }
 
     public User(String username, String password, String name, String lastname, String age, String email, UserRole... userRoles) {
-        this(username, password, name, lastname, age, email, Set.of(userRoles));
+        this(username, password, name, lastname, age, email, Arrays.asList(userRoles));
     }
 
     public Long getId() {
@@ -130,8 +127,14 @@ public class User implements UserDetails {
             System.out.println("encrypted password set: " + password);
             this.password = password;
         } else {
-            System.out.println("plain password set: " + password + Arrays.toString(password.getBytes()));
-            this.password = passwordEncoder.encode(password);
+            int len = password.length();
+            if ((len>=4)&&(len<=60)) {
+                System.out.println("plain password set: " + password + Arrays.toString(password.getBytes()));
+                this.password = passwordEncoder.encode(password);
+            } else {
+                System.out.println("password not set, too long ot too short");
+                this.password = password;
+            }
         }
     }
 
@@ -167,11 +170,11 @@ public class User implements UserDetails {
         this.email = checkAndCorrectEncoding(email);
     }
 
-    public Set<UserRole> getUserRoles() {
+    public List<UserRole> getUserRoles() {
         return userRoles;
     }
 
-    public void setUserRoles(Set<UserRole> userRoles) {
+    public void setUserRoles(List<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
 

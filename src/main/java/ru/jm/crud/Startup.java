@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import ru.jm.crud.model.User;
 import ru.jm.crud.model.UserRole;
+import ru.jm.crud.service.RoleService;
 import ru.jm.crud.service.UserService;
 
 import java.util.ArrayList;
@@ -17,10 +18,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Startup {
 
     UserService service;
+    RoleService roleService;
 
     @Autowired
-    public void setService(UserService service) {
+    public void setService(UserService service, RoleService roleService) {
         this.service = service;
+        this.roleService = roleService;
     }
 
     private static String randomLogin() {
@@ -74,9 +77,9 @@ public class Startup {
             UserRole role1 = new UserRole("ROLE_ADMIN");
             UserRole role2 = new UserRole("ROLE_USER");
             UserRole role3 = new UserRole("ROLE_GUEST");
-            service.add(role1);
-            service.add(role2);
-            service.add(role3);
+            roleService.add(role1);
+            roleService.add(role2);
+            roleService.add(role3);
 
 
             service.add(new User("ADMIN", "ADMIN", "Саша", "Moiseev", "36", "sobergrim@gmail.com", role1, role2, role3));

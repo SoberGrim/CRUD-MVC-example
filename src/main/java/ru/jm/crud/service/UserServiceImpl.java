@@ -27,22 +27,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String add(UserRole userRole) {
-        return dao.add(userRole);
-    }
-
-    @Override
-    public UserRole getRole(Integer id) {
-        return dao.getRole(id);
-    }
-
-    @Override
-    public Set<UserRole> getRoles() {
-        return dao.getRoles();
-    }
-
-
-    @Override
     public String add(String username, String password, String firstName, String lastName, String age, String email, UserRole... roles) {
         return dao.add(username, password, firstName, lastName, age, email, roles);
     }
