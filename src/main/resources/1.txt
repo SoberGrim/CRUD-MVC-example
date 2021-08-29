@@ -1,51 +1,18 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Edit</title>
-  </head>
-  <body id="body">
-    <form th:method="patch" th:action="@{/admin/{id}/edit(id=${user.getId()})}" th:object="${user}">
-      <input type="text" hidden="true" th:field="*{id}" id="id">
-      <br>
-      <label for="username">Username: </label><br>
-      <input type="text" th:field="*{username}" id="username">
-      <label style="color:red" th:if="${#fields.hasErrors('username')}" th:utext="${#fields.errors('username').get(0)}"></label>
-      <br><br>
-      <label for="password">Password: </label><br>
-      <input type="text" th:field="*{password}" id="password">
-      <label style="color:red" th:if="${#fields.hasErrors('password')}" th:utext="${#fields.errors('password').get(0)}"></label>
-      <br><br>
-      <label for="firstname">Name:</label><br>
-      <input type="text" th:field="*{firstname}" id="firstname">
-      <label style="color:red" th:if="${#fields.hasErrors('firstname')}" th:utext="${#fields.errors('firstname').get(0)}"></label>
-      <br><br>
-      <label for="lastname">Lastname: </label><br>
-      <input type="text" th:field="*{lastname}" id="lastname">
-      <label style="color:red" th:if="${#fields.hasErrors('lastname')}" th:utext="${#fields.errors('lastname').get(0)}"></label>
-      <br><br>
-      <label for="age">Age: </label><br>
-      <input type="text" th:field="*{age}" id="age">
-      <label style="color:red" th:if="${#fields.hasErrors('age')}">Age should be between 0 and 199 years</label>
-      <br><br>
-      <label for="email">Email: </label><br>
-      <input type="text" th:field="*{email}" id="email">
-      <label style="color:red" th:if="${#fields.hasErrors('email')}" th:utext="${#fields.errors('email').get(0)}"></label>
-      <br><br>
-
-      <label>Roles</label>
-      <br>
-      <div th:each="r : ${roles}">
-        <label>
-          <input type="checkbox" name="index" th:value="${r.id}"/>
-        </label>
-        <label th:text="${r.role}"></label>
-        <br>
-      </div>
-      <br><br>
-
-      <button type="button" onclick="location.href = '/admin';">Return</button>&nbsp;<input type="submit" value="Update"/>
-    </form>
-  </body>
-</html>
+* при старте программа создает схему test и таблицы. Требуется указать только логин-пароль от вашей базы в scr/main/resources/application.yml
+* при старте создается несколько стандартных пользователей и несколько сотен автогенерируемых
+* программа сама делает активным браузер и открывает /localhost/
+* у пользователей могут быть русские логины-пароли и по ним можно логиниться
+* рядом со страницей логина страница регистрации. если нет аккаунта - можно зарегистрироваться как гость.
+* на странице гостей /welcome и странице пользователя /user разные кнопки в зависимости от прав доступа
+* на главной список пользователей разбит на страницы
+* оистать страницы с пользователйми можно соотв. кнопками, или нажимая "вправо\влево" или "вверх\вниз" на клавиатуре
+* для всех остальных действий на главной админа так же есть шорткаты: (n) новый пользователь (f) - фильтр (s) - поиск (r) - сбросить фильтр (m)- мой профиль (w) - welcome page
+* фильтр есть строгий (filter) и нестрогий (search). 
+	Filter для ввода "33 года, Миша, админ" выдаст только Миш 33 лет у которых только одна роль - админ.
+	Search для ввода "1 год, 33 емейл, роль юзер" выдаст всех, у кого в возрасте есть хотя бы одна цифра 1, в емейле есть 33, и у кого при этом в числе прочих есть роль юзер
+* при редактировании\создании пользователей идет проверка всех вводимых данных. 
+	Из особенностей: поверка емейла ?@?.? проверка не занят ли логин и не занят ли емейл. 
+	Если логин\емейл заняты или неправильно введено другое поле - ошибочное поле сбросится и будет предложено исправить. Корректно введенные данные не пропадут.
+* роли везде в списках выводятся по порядку: админ\юзер\гость, никакого рандома свойственному ролям, хранящимся в "Set<Role>"'
+* автонаполнение базы производится в ускоренном режиме методом "bulkSave", для шифрования задана минимальная степень защиты - и то и то вместе позволяют
+		загрузить в БД в пределах тысячи пользователей не вызывая ощутимых тормозов при старте

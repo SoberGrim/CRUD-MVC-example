@@ -11,8 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
@@ -27,20 +29,25 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping()
-    public String getAllUsers(Model model) {
-        model.addAttribute("users", service.getFilterUsers());
+    @GetMapping("")
+    public String showIndexPages(@RequestParam(name = "page", required = false, defaultValue = "1") String strParam,
+                                 Model model) {
+        int pageNum = strParam.matches("\\d+") ? Integer.parseInt(strParam) : 1;
+        model.addAttribute("pageNum", pageNum);
+        List<User> users = (pageNum == 1) ? service.getFilterUsers(false) : service.getFilterUsers(true);
+        model.addAttribute("users", users);
         model.addAttribute("isFilterActive", service.isFilterSet());
         return "index";
     }
 
     @GetMapping("{id}")
-    public String findById(@PathVariable("id") Long id, Model model) {
+    public String showUserById(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", service.getById(id));
         ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         return "show";
     }
+
 
     @GetMapping("{id}/edit")
     public String editUser(@PathVariable("id") Long id, Model model) {
@@ -54,10 +61,10 @@ public class AdminController {
 
 
     @PatchMapping("{id}/edit")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
-                         @RequestParam(value = "index", required = false) Integer[] index,
-                         @PathVariable("id") Long id,
-                         Model model) {
+    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                             @RequestParam(value = "index", required = false) Integer[] index,
+                             @PathVariable("id") Long id,
+                             Model model) {
         ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         User userOrig = service.getById(id);
@@ -93,7 +100,7 @@ public class AdminController {
     }
 
     @GetMapping("/new")
-    public String addNewUser(Model model) {
+    public String addNewUserPage(Model model) {
         ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         User user = new User();
@@ -103,9 +110,9 @@ public class AdminController {
 
 
     @PostMapping("/new")
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
-                         @RequestParam(value = "index", required = false) Integer[] index,
-                         Model model) {
+    public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                             @RequestParam(value = "index", required = false) Integer[] index,
+                             Model model) {
         ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
 
@@ -138,22 +145,22 @@ public class AdminController {
     }
 
     @GetMapping("filter")
-    public String filter(@ModelAttribute("user") User user, Model model) {
+    public String filterPage(@ModelAttribute("user") User user, Model model) {
         ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         return "filter";
     }
 
     @GetMapping("search")
-    public String search(@ModelAttribute("user") User user, Model model) {
+    public String searchPage(@ModelAttribute("user") User user, Model model) {
         ArrayList<UserRole> roles = roleService.getRoles();
         model.addAttribute("roles", roles);
         return "search";
     }
 
     @PostMapping("filter")
-    public String filterPost(@ModelAttribute("user") User user,
-                             @RequestParam(value = "index", required = false) Integer[] index) {
+    public String filterApply(@ModelAttribute("user") User user,
+                              @RequestParam(value = "index", required = false) Integer[] index) {
         System.out.println("Setting filter");
         if (index != null) {
             for (Integer i : index) {
@@ -165,8 +172,8 @@ public class AdminController {
     }
 
     @PostMapping("search")
-    public String searchPost(@ModelAttribute("user") User user,
-                             @RequestParam(value = "index", required = false) Integer[] index) {
+    public String searchApply(@ModelAttribute("user") User user,
+                              @RequestParam(value = "index", required = false) Integer[] index) {
         System.out.println("Setting search filter");
         if (index != null) {
             for (Integer i : index) {
@@ -185,7 +192,7 @@ public class AdminController {
     }
 
     @GetMapping("/delete={id}")
-    public String deleteByGet(@PathVariable("id") Long id) {
+    public String deleteUserById(@PathVariable("id") Long id) {
         service.delete(id);
         return "redirect:/admin";
     }

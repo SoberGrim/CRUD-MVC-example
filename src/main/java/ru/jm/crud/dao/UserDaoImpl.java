@@ -4,6 +4,7 @@ import ru.jm.crud.model.User;
 import ru.jm.crud.model.UserRole;
 
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -35,6 +36,34 @@ public class UserDaoImpl implements UserDao {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    public <T extends User> Collection<T> bulkSave(Collection<T> entities) {
+        final List<T> savedEntities = new ArrayList<>(entities.size());
+        int i = 0;
+        System.out.println("filling DB with users...");
+        for (T t : entities) {
+            savedEntities.add(persistOrMerge(t));
+            i++;
+            if (i % 100 == 0) {
+                // Flush a batch of inserts and release memory.
+                entityManager.flush();
+                entityManager.clear();
+            }
+        }
+        System.out.println("filling DB done");
+        return savedEntities;
+    }
+
+    private <T extends User> T persistOrMerge(T t) {
+        if (t.getId() == null) {
+            entityManager.persist(t);
+            return t;
+        } else {
+            return entityManager.merge(t);
+        }
+    }
+
+
 
     @Override
     public String add(User user) {
@@ -119,18 +148,24 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers(boolean fromCache) {
+        if (fromCache) {
+            System.out.println("getting full user list from cache");
+            return this.userCache;
+        }
+        System.out.println("getting FULL user list from DB");
         this.userCache = entityManager.createQuery("FROM User", User.class).getResultList();
         return new LinkedList<>(this.userCache);
     }
 
+
     @Override
-    public List<User> getFilterUsers() {
-        System.out.println("getting FULL user list from SQL:");
+    public List<User> getFilterUsers(boolean fromCache) {
         return this.isFilterActive ?
                 (this.filterStrict) ? getStrictFilterUsers() : getNonStrictFilterUsers()
-                : getAllUsers();
+                : getAllUsers(fromCache);
     }
+
 
     private List<User> getStrictFilterUsers() {
         System.out.println("Filtering users in user cache");
@@ -175,8 +210,18 @@ public class UserDaoImpl implements UserDao {
                 found = true;
             }
 
-            if ((this.filterRoles != null)&&(this.filterRoles.size() != 0)) {
-                found = (user.getUserRoles().equals(this.filterRoles));
+            if ((this.filterRoles != null) && (this.filterRoles.size() != 0)) {
+                boolean userHasSearchedRoles = false;
+                List<UserRole> userRoles = user.getUserRoles();
+                for (UserRole userRole : userRoles) {
+                    if (this.filterRoles.contains(userRole)) {
+                        userHasSearchedRoles = true;
+                    } else {
+                        userHasSearchedRoles = false;
+                        break;
+                    }
+                }
+                found = userHasSearchedRoles;
             }
 
             if (found) {
@@ -189,7 +234,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private List<User> getNonStrictFilterUsers() {
-        System.out.println("Filtering users in user cache");
+        System.out.println("Searching users in user cache");
         List<User> list = this.userCache;
         List<User> outList = new LinkedList<>();
 
@@ -231,10 +276,10 @@ public class UserDaoImpl implements UserDao {
                 found = true;
             }
 
-            if ((this.filterRoles != null)&&(this.filterRoles.size() != 0)) {
+            if ((this.filterRoles != null) && (this.filterRoles.size() != 0)) {
                 boolean userHasSearchedRoles = true;
                 List<UserRole> userRoles = user.getUserRoles();
-                for (UserRole searchedRole: this.filterRoles) {
+                for (UserRole searchedRole : this.filterRoles) {
                     if (!userRoles.contains(searchedRole)) {
                         userHasSearchedRoles = false;
                         break;
@@ -251,7 +296,6 @@ public class UserDaoImpl implements UserDao {
 
         return outList;
     }
-
 
 
     @Override

@@ -3,7 +3,6 @@ package ru.jm.crud.controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import ru.jm.crud.model.User;
-import ru.jm.crud.model.UserRole;
 import ru.jm.crud.service.RoleService;
 import ru.jm.crud.service.UserService;
 

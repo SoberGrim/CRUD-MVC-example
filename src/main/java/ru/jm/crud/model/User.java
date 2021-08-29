@@ -19,7 +19,7 @@ import java.util.function.UnaryOperator;
 @Entity
 @Table(name = "users", schema = "test")
 public class User implements UserDetails {
-    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
 
     private String checkAndCorrectEncoding(String str) {
         UnaryOperator<String> conv = (name) -> {
@@ -123,7 +123,7 @@ public class User implements UserDetails {
     }
 
     public void setPassword(String password) {
-        if (password.startsWith("$2a$10$") && password.length() == 60) {
+        if (password.startsWith("$2a$") && password.length() == 60) {
             System.out.println("encrypted password set: " + password);
             this.password = password;
         } else {
@@ -132,7 +132,7 @@ public class User implements UserDetails {
                 System.out.println("plain password set: " + password + Arrays.toString(password.getBytes()));
                 this.password = passwordEncoder.encode(password);
             } else {
-                System.out.println("password not set, too long ot too short");
+                 System.out.println("password not set, too long ot too short");
                 this.password = password;
             }
         }

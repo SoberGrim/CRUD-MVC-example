@@ -3,12 +3,14 @@ package ru.jm.crud.dao;
 import ru.jm.crud.model.User;
 import ru.jm.crud.model.UserRole;
 
+import java.util.Collection;
 import java.util.List;
 
 
 public interface UserDao {
 
     String add(User user);
+    <T extends User> Collection<T> bulkSave(Collection<T> entities);
     String add(String username, String password, String firstName, String lastName, String age, String email, UserRole... roles);
     User getById(Long id);
     User getByUsername(String username);
@@ -17,9 +19,8 @@ public interface UserDao {
     List<User> getByLastName(String lastname);
     User getByEmail(String email);
     List<User> getByAge(String age);
-
-    List<User> getAllUsers();
-    List<User> getFilterUsers();
+    List<User> getAllUsers(boolean fromCache);
+    List<User> getFilterUsers(boolean fromCache);
     void setFilter(User user, boolean strict);
     boolean isFilterSet();
 

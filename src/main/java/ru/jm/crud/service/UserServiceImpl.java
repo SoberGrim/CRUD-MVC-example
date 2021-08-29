@@ -7,6 +7,8 @@ import ru.jm.crud.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 import java.util.List;
 
 
@@ -24,6 +26,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public String add(User user) {
         return dao.add(user);
+    }
+
+    public <T extends User> Collection<T> bulkSave(Collection<T> entities) {
+        return dao.bulkSave(entities);
     }
 
     @Override
@@ -67,13 +73,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return dao.getAllUsers();
+    public List<User> getAllUsers(boolean fromCache) {
+        return dao.getAllUsers(fromCache);
     }
 
     @Override
-    public List<User> getFilterUsers() {
-        return dao.getFilterUsers();
+    public List<User> getFilterUsers(boolean fromCache) {
+        return dao.getFilterUsers(fromCache);
     }
 
     @Override
